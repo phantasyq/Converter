@@ -3,8 +3,8 @@
   "short_name":"¥元→$→₽",
   "start_url":"./",
   "display":"standalone",
-  "background_color":"#f6f7f9",
+  "background_color":"#f5f6f8",
   "theme_color":"#ffffff",
-  "description":"Два персональных конвертера: иена→доллар→рубль и юань→доллар→рубль",
+  "description":"Быстрый конвертер иен и юаней через доллар в рубли",
   "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
