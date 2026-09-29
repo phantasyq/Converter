@@ -1,10 +1,10 @@
 {
-  "name":"¥ / 元 → $ → ₽ Конвертер",
-  "short_name":"¥元→$→₽",
+  "name":"Конвертер CNY / JPY / USD / RUB",
+  "short_name":"CNY / JPY / RUB",
   "start_url":"./",
   "display":"standalone",
   "background_color":"#f5f6f8",
   "theme_color":"#ffffff",
-  "description":"Быстрый конвертер иен и юаней через доллар в рубли",
+  "description":"Персональный конвертер валют и история покупок",
   "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
