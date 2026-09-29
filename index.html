@@ -11,14 +11,10 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>Конвертер CNY / JPY / USD / RUB</title>
 <style>
-:root{
-  --bg:#f5f6f8;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e2e5ea;
-  --accent:#1473e6;--soft:#f1f3f6;--ok:#edf8ef;--dark:#111827;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-}
+:root{--bg:#f5f6f8;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e2e5ea;--accent:#1473e6;--soft:#f1f3f6;--ok:#edf8ef;--dark:#111827;--danger:#a33;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-.wrap{max-width:700px;margin:0 auto;padding:14px 12px 30px}
+.wrap{max-width:720px;margin:0 auto;padding:14px 12px 30px}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 h1{font-size:27px;line-height:1.1;margin:0;letter-spacing:-.6px}
 .icon-btn{border:0;background:#fff;width:42px;height:42px;border-radius:13px;font-size:20px}
@@ -31,18 +27,16 @@ h1{font-size:27px;line-height:1.1;margin:0;letter-spacing:-.6px}
 .rate-body{margin-top:11px}
 .rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
-.rate-input{
-  width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:11px;
-  font-size:17px;outline:none;background:#fff
-}
+.rate-input{width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:11px;font-size:17px;outline:none;background:#fff}
 .rate-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(20,115,230,.12)}
 .actions{display:flex;gap:8px;margin-top:10px}
 button{appearance:none;border:1px solid var(--line);background:var(--soft);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;cursor:pointer}
 button:active{transform:translateY(1px)}
+button:disabled{opacity:.5;cursor:not-allowed}
 .secondary{background:#fff}
-.danger{color:#a33}
+.danger{color:var(--danger)}
 .history-card{margin-bottom:12px}
-.history-actions{display:flex;gap:7px}
+.history-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
 .history-body{margin-top:11px}
 .history-body.hidden{display:none}
 .history-empty{font-size:13px;color:var(--muted);padding:10px 2px}
@@ -50,12 +44,11 @@ button:active{transform:translateY(1px)}
 .history-item{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff}
 .history-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
 .history-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.history-main{font-size:17px;font-weight:780}
+.history-main{font-size:16px;font-weight:780}
 .history-rub{font-size:19px;font-weight:820;white-space:nowrap}
-.history-time{font-size:11px;color:var(--muted);margin-top:4px}
-.history-meta{font-size:11px;color:var(--muted);line-height:1.45;margin-top:5px}
-.history-rates{font-size:11px;color:var(--muted);line-height:1.5;margin-top:6px}
+.history-time,.history-meta,.history-rates{font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px}
 .history-delete{border:0;background:transparent;color:var(--muted);padding:3px 0 0;font-size:11px}
+.export-btn{background:#fff;font-weight:700}
 .switcher{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:6px;margin-bottom:12px}
 .switch{border:0;background:transparent;font-weight:750;padding:12px 8px}
 .switch.active{background:var(--dark);color:#fff}
@@ -68,10 +61,7 @@ button:active{transform:translateY(1px)}
 .input-shell{margin-top:12px;border:2px solid var(--accent);border-radius:16px;background:#fff;padding:6px 9px}
 .input-line{display:flex;align-items:center;gap:7px}
 .input-symbol{font-size:30px;font-weight:700;min-width:35px}
-.store-input{
-  width:100%;border:0;background:transparent;outline:none;box-shadow:none;
-  font-size:43px;font-weight:760;text-align:right;padding:3px 1px
-}
+.store-input{width:100%;border:0;background:transparent;outline:none;box-shadow:none;font-size:43px;font-weight:760;text-align:right;padding:3px 1px}
 .store-input:focus{box-shadow:none}
 .clear-btn{border:0;background:var(--soft);color:var(--muted);border-radius:50%;width:33px;height:33px;padding:0;font-size:24px;line-height:1}
 .path{display:flex;justify-content:center;gap:12px;color:var(--muted);font-size:12px;padding:9px 0}
@@ -81,18 +71,21 @@ button:active{transform:translateY(1px)}
 .out-label{font-size:11px;color:var(--muted);margin-bottom:3px}
 .out-value{font-size:27px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .formula{font-size:11px;color:var(--muted);padding:7px 2px 0}
-.buy-btn{
-  width:100%;margin-top:10px;background:var(--dark);color:#fff;border-color:var(--dark);
-  font-weight:800;padding:13px 10px;font-size:15px
-}
+.buy-btn{width:100%;margin-top:10px;background:var(--dark);color:#fff;border-color:var(--dark);font-weight:800;padding:13px 10px;font-size:15px}
 .buy-btn.saved{background:#2d7a43;border-color:#2d7a43}
+.category-title{font-size:12px;color:var(--muted);font-weight:700;margin:13px 0 7px}
+.categories{display:flex;flex-wrap:wrap;gap:7px}
+.category-btn{padding:9px 10px;background:#fff;font-size:13px}
+.category-btn.active{background:#eaf2ff;border-color:#8ebcff;box-shadow:0 0 0 1px #8ebcff}
+.custom-category{display:none;margin-top:8px}
+.custom-category.show{display:block}
+.custom-input{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 10px;font-size:15px;outline:none}
+.custom-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(20,115,230,.12)}
 .tip{text-align:center;color:var(--muted);font-size:11px;margin:10px 8px}
 .install{display:none;margin-top:9px;background:#fff;border:1px dashed #cfd4dc;border-radius:12px;padding:10px 11px;color:var(--muted);font-size:11px}
 .footer{text-align:center;color:var(--muted);font-size:10px;margin-top:9px}
-@media(max-width:540px){
-  .rate-grid{grid-template-columns:1fr}
-  .store-input{font-size:41px}
-}
+@media(max-width:620px){.rate-grid{grid-template-columns:1fr}.history-actions{width:100%;justify-content:flex-start}.outputs{grid-template-columns:1fr 1.1fr}}
+@media(max-width:540px){.store-input{font-size:41px}.categories{display:grid;grid-template-columns:repeat(2,1fr)}.category-btn{text-align:left}}
 </style>
 </head>
 <body>
@@ -129,6 +122,7 @@ button:active{transform:translateY(1px)}
       </div>
       <div class="history-actions">
         <button id="historyToggle" class="secondary" type="button">Показать</button>
+        <button id="exportExcel" class="export-btn" type="button">📊 Выгрузить в Excel</button>
         <button id="clearHistory" class="secondary danger" type="button">Очистить</button>
       </div>
     </div>
@@ -151,7 +145,6 @@ button:active{transform:translateY(1px)}
       </div>
       <div id="jpyRateLabel" class="converter-rate">¥157 = $1</div>
     </div>
-
     <div class="input-shell">
       <div class="input-line">
         <span class="input-symbol">¥</span>
@@ -159,13 +152,19 @@ button:active{transform:translateY(1px)}
         <button class="clear-btn" id="jpyClear" type="button" aria-label="Очистить">×</button>
       </div>
     </div>
-
     <div class="path"><span>¥</span><span>→</span><span>$</span><span>→</span><span>₽</span></div>
     <div class="outputs">
       <div class="output"><div class="out-label">$ Доллары</div><div id="jpyUsd" class="out-value">$1,46</div></div>
       <div class="output result"><div class="out-label">₽ Рубли</div><div id="jpyRub" class="out-value">₽126,94</div></div>
     </div>
     <div id="jpyFormula" class="formula">230 ÷ 157 × 86,65</div>
+
+    <div class="category-title">Категория покупки</div>
+    <div class="categories" id="jpyCategories"></div>
+    <div class="custom-category" id="jpyCustomWrap">
+      <label for="jpyCustom">Своя категория</label>
+      <input id="jpyCustom" class="custom-input" type="text" maxlength="50" placeholder="Например: Аптека">
+    </div>
     <button id="buyJpy" class="buy-btn" type="button">🛒 Купить · записать покупку</button>
   </section>
 
@@ -177,7 +176,6 @@ button:active{transform:translateY(1px)}
       </div>
       <div id="cnyRateLabel" class="converter-rate">元7 = $1</div>
     </div>
-
     <div class="input-shell">
       <div class="input-line">
         <span class="input-symbol">元</span>
@@ -185,138 +183,251 @@ button:active{transform:translateY(1px)}
         <button class="clear-btn" id="cnyClear" type="button" aria-label="Очистить">×</button>
       </div>
     </div>
-
     <div class="path"><span>元</span><span>→</span><span>$</span><span>→</span><span>₽</span></div>
     <div class="outputs">
       <div class="output"><div class="out-label">$ Доллары</div><div id="cnyUsd" class="out-value">$14,29</div></div>
       <div class="output result"><div class="out-label">₽ Рубли</div><div id="cnyRub" class="out-value">₽1 238,57</div></div>
     </div>
     <div id="cnyFormula" class="formula">100 ÷ 7 × 86,65</div>
+
+    <div class="category-title">Категория покупки</div>
+    <div class="categories" id="cnyCategories"></div>
+    <div class="custom-category" id="cnyCustomWrap">
+      <label for="cnyCustom">Своя категория</label>
+      <input id="cnyCustom" class="custom-input" type="text" maxlength="50" placeholder="Например: Аптека">
+    </div>
     <button id="buyCny" class="buy-btn" type="button">🛒 Купить · записать покупку</button>
   </section>
 
-  <div class="tip">Выбери валюту, введи цену, после покупки нажми «Купить», чтобы зафиксировать расчёт.</div>
+  <div class="tip">Выбери валюту, введи цену, выбери категорию и нажми «Купить».</div>
   <div id="installHint" class="install"></div>
-  <div class="footer">Курсы и история сохраняются только на этом устройстве.</div>
+  <div class="footer">Курсы и история хранятся локально на этом устройстве.</div>
 </div>
 
 <script>
 (() => {
   "use strict";
 
-  const defaults = { rubRate: 86.65, jpyRate: 157, cnyRate: 7 };
-  const $ = (id) => document.getElementById(id);
-  const num = (value) => {
-    const n = parseFloat(String(value).replace(",", ".").replace(/[^0-9.\-]/g, ""));
+  const defaults = { rubRate:86.65, jpyRate:157, cnyRate:7 };
+  const CATEGORIES = [
+    {id:"food", icon:"🍜", name:"Еда"},
+    {id:"tech", icon:"💻", name:"Техника"},
+    {id:"clothes", icon:"👕", name:"Одежда"},
+    {id:"cosmetics", icon:"💄", name:"Косметика"},
+    {id:"souvenirs", icon:"🎁", name:"Сувениры"},
+    {id:"excursions", icon:"🗺️", name:"Экскурсии"},
+    {id:"custom", icon:"✏️", name:"Своя"}
+  ];
+
+  const $ = id => document.getElementById(id);
+  const num = value => {
+    const n = parseFloat(String(value).replace(",",".").replace(/[^0-9.\-]/g,""));
     return Number.isFinite(n) ? n : NaN;
   };
-  const money = (value, digits = 2) =>
-    new Intl.NumberFormat("ru-RU", {
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits
-    }).format(value);
+  const money = (value,d=2) => new Intl.NumberFormat("ru-RU",{minimumFractionDigits:d,maximumFractionDigits:d}).format(value);
 
   let activeCurrency = "jpy";
+  let selectedCategory = {jpy:null,cny:null};
 
-  function readRates() {
-    return {
-      rubRate: num($("rubRate").value),
-      jpyRate: num($("jpyRate").value),
-      cnyRate: num($("cnyRate").value)
-    };
+  // ---------- Rates & amounts ----------
+  function readRates(){
+    return {rubRate:num($("rubRate").value),jpyRate:num($("jpyRate").value),cnyRate:num($("cnyRate").value)};
   }
 
-  function calculate() {
-    const { rubRate, jpyRate, cnyRate } = readRates();
-    if (!(rubRate > 0 && jpyRate > 0 && cnyRate > 0)) return;
-
-    const jpy = Math.max(0, num($("jpy").value) || 0);
-    const jpyUsd = jpy / jpyRate;
-    $("jpyUsd").textContent = "$" + money(jpyUsd);
-    $("jpyRub").textContent = "₽" + money(jpyUsd * rubRate);
-    $("jpyFormula").textContent = `${money(jpy, 0)} ÷ ${money(jpyRate)} × ${money(rubRate)}`;
-    $("jpyRateLabel").textContent = `¥${money(jpyRate)} = $1`;
-
-    const cny = Math.max(0, num($("cny").value) || 0);
-    const cnyUsd = cny / cnyRate;
-    $("cnyUsd").textContent = "$" + money(cnyUsd);
-    $("cnyRub").textContent = "₽" + money(cnyUsd * rubRate);
-    $("cnyFormula").textContent = `${money(cny, 0)} ÷ ${money(cnyRate)} × ${money(rubRate)}`;
-    $("cnyRateLabel").textContent = `元${money(cnyRate)} = $1`;
-
-    localStorage.setItem("converterAmountsV1", JSON.stringify({
-      jpy: $("jpy").value,
-      cny: $("cny").value
-    }));
-  }
-
-  function loadSaved() {
-    try {
+  function loadLocalRatesAndAmounts(){
+    try{
       const rates = JSON.parse(localStorage.getItem("converterRatesV1") || "null");
-      if (rates) {
-        for (const key of ["rubRate", "jpyRate", "cnyRate"]) {
-          if (Number.isFinite(Number(rates[key])) && Number(rates[key]) > 0) {
-            $(key).value = rates[key];
-          }
-        }
+      if(rates){
+        ["rubRate","jpyRate","cnyRate"].forEach(k=>{
+          if(Number.isFinite(Number(rates[k])) && Number(rates[k])>0) $(k).value=rates[k];
+        });
       }
       const amounts = JSON.parse(localStorage.getItem("converterAmountsV1") || "null");
-      if (amounts) {
-        if (amounts.jpy !== undefined) $("jpy").value = amounts.jpy;
-        if (amounts.cny !== undefined) $("cny").value = amounts.cny;
+      if(amounts){
+        if(amounts.jpy!==undefined) $("jpy").value=amounts.jpy;
+        if(amounts.cny!==undefined) $("cny").value=amounts.cny;
       }
-    } catch (_) {}
+    }catch(_){}
   }
 
-  function saveRates() {
+  function calculate(){
     const rates = readRates();
-    if (!(rates.rubRate > 0 && rates.jpyRate > 0 && rates.cnyRate > 0)) {
-      alert("Проверь все три курса.");
-      return;
+    if(!(rates.rubRate>0 && rates.jpyRate>0 && rates.cnyRate>0)) return;
+
+    const jpy = Math.max(0,num($("jpy").value)||0);
+    const ju = jpy/rates.jpyRate;
+    $("jpyUsd").textContent="$"+money(ju);
+    $("jpyRub").textContent="₽"+money(ju*rates.rubRate);
+    $("jpyFormula").textContent=`${money(jpy,0)} ÷ ${money(rates.jpyRate)} × ${money(rates.rubRate)}`;
+    $("jpyRateLabel").textContent=`¥${money(rates.jpyRate)} = $1`;
+
+    const cny = Math.max(0,num($("cny").value)||0);
+    const cu = cny/rates.cnyRate;
+    $("cnyUsd").textContent="$"+money(cu);
+    $("cnyRub").textContent="₽"+money(cu*rates.rubRate);
+    $("cnyFormula").textContent=`${money(cny,0)} ÷ ${money(rates.cnyRate)} × ${money(rates.rubRate)}`;
+    $("cnyRateLabel").textContent=`元${money(rates.cnyRate)} = $1`;
+
+    localStorage.setItem("converterAmountsV1",JSON.stringify({jpy:$("jpy").value,cny:$("cny").value}));
+  }
+
+  function saveRates(){
+    const rates=readRates();
+    if(!(rates.rubRate>0 && rates.jpyRate>0 && rates.cnyRate>0)){
+      alert("Проверь все три курса."); return;
     }
-    localStorage.setItem("converterRatesV1", JSON.stringify(rates));
+    localStorage.setItem("converterRatesV1",JSON.stringify(rates));
     calculate();
-    $("saveRates").textContent = "Сохранено ✓";
-    setTimeout(() => $("saveRates").textContent = "Сохранить", 1200);
+    $("saveRates").textContent="Сохранено ✓";
+    setTimeout(()=>$("saveRates").textContent="Сохранить",1200);
   }
 
-  function getHistory() {
-    try {
-      const data = JSON.parse(localStorage.getItem("converterHistoryV2") || "[]");
-      return Array.isArray(data) ? data : [];
-    } catch (_) {
-      return [];
+  // ---------- Categories ----------
+  function renderCategories(currency){
+    const container = $(currency+"Categories");
+    container.innerHTML = "";
+    for(const c of CATEGORIES){
+      const btn=document.createElement("button");
+      btn.type="button";
+      btn.className="category-btn"+(selectedCategory[currency]?.id===c.id?" active":"");
+      btn.dataset.category=c.id;
+      btn.textContent=`${c.icon} ${c.name}`;
+      btn.addEventListener("click",()=>{
+        selectedCategory[currency]=c;
+        container.querySelectorAll(".category-btn").forEach(x=>x.classList.remove("active"));
+        btn.classList.add("active");
+        $(currency+"CustomWrap").classList.toggle("show",c.id==="custom");
+        if(c.id==="custom") $(currency+"Custom").focus();
+      });
+      container.appendChild(btn);
     }
   }
 
-  function setHistory(list) {
-    localStorage.setItem("converterHistoryV2", JSON.stringify(list));
+  function getSelectedCategory(currency){
+    const c=selectedCategory[currency];
+    if(!c) return null;
+    if(c.id==="custom"){
+      const value=$(currency+"Custom").value.trim();
+      if(!value) return null;
+      return {id:"custom",icon:"✏️",name:value};
+    }
+    return c;
   }
 
-  function renderHistory() {
-    const list = getHistory();
-    $("historyCount").textContent = `${list.length} ${list.length === 1 ? "покупка" : "покупок"}`;
-    $("historyList").innerHTML = "";
+  // ---------- IndexedDB history ----------
+  const DB_NAME = "CurrencyConverterDB";
+  const DB_VERSION = 1;
+  const STORE_NAME = "purchases";
 
-    if (!list.length) {
-      $("historyEmpty").style.display = "block";
-      return;
+  function openDB(){
+    return new Promise((resolve,reject)=>{
+      if(!("indexedDB" in window)){reject(new Error("IndexedDB unavailable"));return;}
+      const req=indexedDB.open(DB_NAME,DB_VERSION);
+      req.onupgradeneeded=()=>{
+        const db=req.result;
+        if(!db.objectStoreNames.contains(STORE_NAME)){
+          const store=db.createObjectStore(STORE_NAME,{keyPath:"id"});
+          store.createIndex("time","time",{unique:false});
+        }
+      };
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error||new Error("IndexedDB error"));
+    });
+  }
+
+  async function dbGetAll(){
+    const db=await openDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readonly");
+      const req=tx.objectStore(STORE_NAME).getAll();
+      req.onsuccess=()=>resolve(Array.isArray(req.result)?req.result:[]);
+      req.onerror=()=>reject(req.error);
+      tx.oncomplete=()=>db.close();
+    });
+  }
+
+  async function dbPut(item){
+    const db=await openDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readwrite");
+      tx.objectStore(STORE_NAME).put(item);
+      tx.oncomplete=()=>{db.close();resolve();};
+      tx.onerror=()=>{db.close();reject(tx.error);};
+    });
+  }
+
+  async function dbDelete(id){
+    const db=await openDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readwrite");
+      tx.objectStore(STORE_NAME).delete(id);
+      tx.oncomplete=()=>{db.close();resolve();};
+      tx.onerror=()=>{db.close();reject(tx.error);};
+    });
+  }
+
+  async function dbClear(){
+    const db=await openDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readwrite");
+      tx.objectStore(STORE_NAME).clear();
+      tx.oncomplete=()=>{db.close();resolve();};
+      tx.onerror=()=>{db.close();reject(tx.error);};
+    });
+  }
+
+  function localHistory(){
+    try{
+      const data=JSON.parse(localStorage.getItem("converterHistoryV2")||"[]");
+      return Array.isArray(data)?data:[];
+    }catch(_){return [];}
+  }
+
+  async function migrateLegacyHistory(){
+    let existing=[];
+    try{ existing=await dbGetAll(); }catch(_){ return; }
+    if(existing.length) return;
+    const legacy=localHistory();
+    if(!legacy.length) return;
+    for(const item of legacy){
+      const normalized={
+        ...item,
+        id:String(item.id||(`${Date.now()}_${Math.random().toString(36).slice(2,8)}`)),
+        category:item.category||{id:"custom",icon:"✏️",name:"Без категории"}
+      };
+      try{await dbPut(normalized);}catch(_){}
     }
-    $("historyEmpty").style.display = "none";
+  }
 
-    for (const item of list) {
-      const d = new Date(item.time);
-      const date = d.toLocaleDateString("ru-RU", {day:"2-digit", month:"2-digit", year:"numeric"});
-      const time = d.toLocaleTimeString("ru-RU", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
-      const symbol = item.currency === "jpy" ? "¥" : "元";
-      const ownRate = item.currency === "jpy" ? item.jpyRate : item.cnyRate;
+  async function getHistory(){
+    try{
+      const list=await dbGetAll();
+      return list.sort((a,b)=>new Date(b.time)-new Date(a.time));
+    }catch(_){
+      return localHistory().sort((a,b)=>new Date(b.time)-new Date(a.time));
+    }
+  }
 
-      const row = document.createElement("div");
-      row.className = "history-item";
-      row.innerHTML = `
-        <div class="history-label">Покупка</div>
+  async function renderHistory(){
+    const list=await getHistory();
+    $("historyCount").textContent=`${list.length} ${list.length===1?"покупка":"покупок"}`;
+    $("historyList").innerHTML="";
+    $("historyEmpty").style.display=list.length?"none":"block";
+
+    for(const item of list){
+      const d=new Date(item.time);
+      const date=d.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric"});
+      const time=d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      const symbol=item.currency==="jpy"?"¥":"元";
+      const ownRate=item.currency==="jpy"?item.jpyRate:item.cnyRate;
+      const category=item.category || {icon:"✏️",name:"Без категории"};
+
+      const row=document.createElement("div");
+      row.className="history-item";
+      row.innerHTML=`
+        <div class="history-label">Покупка · ${category.icon} ${escapeHtml(category.name)}</div>
         <div class="history-row">
-          <div class="history-main">${symbol}${money(item.amount, item.currency === "jpy" ? 0 : 2)}</div>
+          <div class="history-main">${symbol}${money(item.amount,item.currency==="jpy"?0:2)}</div>
           <div class="history-rub">₽${money(item.rub)}</div>
         </div>
         <div class="history-time">${date} · ${time}</div>
@@ -324,152 +435,304 @@ button:active{transform:translateY(1px)}
         <div class="history-rates">
           Курсы в момент покупки:<br>
           $1 = ₽${money(item.rubRate)} · $1 = ¥${money(item.jpyRate)} · $1 = 元${money(item.cnyRate)}
-          <br>Курс для этой покупки: $1 = ${money(ownRate)} ${symbol}
+          <br>Для покупки: $1 = ${money(ownRate)} ${symbol}
         </div>
-        <button class="history-delete" type="button" data-id="${item.id}">Удалить запись</button>
+        <button class="history-delete" type="button" data-id="${escapeAttr(item.id)}">Удалить запись</button>
       `;
       $("historyList").appendChild(row);
     }
 
-    $("historyList").querySelectorAll("[data-id]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const next = getHistory().filter((item) => item.id !== button.dataset.id);
-        setHistory(next);
-        renderHistory();
+    $("historyList").querySelectorAll("[data-id]").forEach(btn=>{
+      btn.addEventListener("click",async()=>{
+        try{await dbDelete(btn.dataset.id);}catch(_){
+          const legacy=localHistory().filter(x=>String(x.id)!==String(btn.dataset.id));
+          localStorage.setItem("converterHistoryV2",JSON.stringify(legacy));
+        }
+        await renderHistory();
       });
     });
   }
 
-  function recordPurchase(currency) {
-    const rates = readRates();
-    const amount = num($(currency).value);
-    const unitPerUsd = currency === "jpy" ? rates.jpyRate : rates.cnyRate;
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function escapeAttr(value){return escapeHtml(value);}
 
-    if (!(rates.rubRate > 0 && rates.jpyRate > 0 && rates.cnyRate > 0 && amount > 0)) {
-      alert("Введите цену и проверьте все три курса.");
-      return;
+  async function recordPurchase(currency){
+    const rates=readRates();
+    const amount=num($(currency).value);
+    const unitPerUsd=currency==="jpy"?rates.jpyRate:rates.cnyRate;
+    const category=getSelectedCategory(currency);
+
+    if(!(rates.rubRate>0 && rates.jpyRate>0 && rates.cnyRate>0)){
+      alert("Проверь все три курса."); return;
+    }
+    if(!(amount>0)){
+      alert("Введите цену покупки."); return;
+    }
+    if(!category){
+      alert("Выбери категорию покупки."); return;
     }
 
-    const usd = amount / unitPerUsd;
-    const rub = usd * rates.rubRate;
-
-    const item = {
-      id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-      time: new Date().toISOString(),
-      currency,
-      amount,
-      usd,
-      rub,
-      rubRate: rates.rubRate,
-      jpyRate: rates.jpyRate,
-      cnyRate: rates.cnyRate
+    const usd=amount/unitPerUsd;
+    const rub=usd*rates.rubRate;
+    const item={
+      id:`${Date.now()}_${Math.random().toString(36).slice(2,10)}`,
+      time:new Date().toISOString(),
+      currency,amount,usd,rub,
+      rubRate:rates.rubRate,jpyRate:rates.jpyRate,cnyRate:rates.cnyRate,
+      category
     };
 
-    const history = getHistory();
-    history.unshift(item);
-    setHistory(history.slice(0, 200));
-    renderHistory();
+    try{
+      await dbPut(item);
+      // Keep up to 400 latest purchases.
+      const all=await dbGetAll();
+      all.sort((a,b)=>new Date(b.time)-new Date(a.time));
+      if(all.length>400){
+        for(const oldItem of all.slice(400)){
+          await dbDelete(oldItem.id);
+        }
+      }
+    }catch(_){
+      const legacy=localHistory();
+      legacy.unshift(item);
+      localStorage.setItem("converterHistoryV2",JSON.stringify(legacy.slice(0,400)));
+    }
 
+    await renderHistory();
     $("historyBody").classList.remove("hidden");
-    $("historyToggle").textContent = "Скрыть";
+    $("historyToggle").textContent="Скрыть";
 
-    const button = $(currency === "jpy" ? "buyJpy" : "buyCny");
+    const button=$(currency==="jpy"?"buyJpy":"buyCny");
     button.classList.add("saved");
-    button.textContent = "✓ Покупка записана";
-    setTimeout(() => {
+    button.textContent="✓ Покупка записана";
+    setTimeout(()=>{
       button.classList.remove("saved");
-      button.textContent = "🛒 Купить · записать покупку";
-    }, 1400);
+      button.textContent="🛒 Купить · записать покупку";
+    },1400);
   }
 
-  function setActive(currency) {
-    activeCurrency = currency;
-    document.querySelectorAll(".switch").forEach((button) => {
-      button.classList.toggle("active", button.dataset.currency === currency);
+  // ---------- XLSX export (built without external libraries) ----------
+  const XML_NS="http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+  function xmlEscape(v){
+    return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+  }
+  function colName(n){
+    let s="";
+    while(n>0){const r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=Math.floor((n-1)/26);}
+    return s;
+  }
+  function xlsxSheetXml(rows){
+    let xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="'+XML_NS+'"><sheetData>';
+    rows.forEach((row,ri)=>{
+      xml+=`<row r="${ri+1}">`;
+      row.forEach((cell,ci)=>{
+        const ref=colName(ci+1)+(ri+1);
+        if(typeof cell==="number" && Number.isFinite(cell)){
+          xml+=`<c r="${ref}"><v>${cell}</v></c>`;
+        }else{
+          xml+=`<c r="${ref}" t="inlineStr"><is><t>${xmlEscape(cell==null?"":cell)}</t></is></c>`;
+        }
+      });
+      xml+="</row>";
     });
-    $("jpyPanel").classList.toggle("hidden", currency !== "jpy");
-    $("cnyPanel").classList.toggle("hidden", currency !== "cny");
+    xml+='</sheetData></worksheet>';
+    return xml;
+  }
+  function crc32(bytes){
+    let table=crc32.table;
+    if(!table){
+      table=new Uint32Array(256);
+      for(let n=0;n<256;n++){
+        let c=n;
+        for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);
+        table[n]=c>>>0;
+      }
+      crc32.table=table;
+    }
+    let c=0xFFFFFFFF;
+    for(const b of bytes)c=table[(c^b)&255]^(c>>>8);
+    return (c^0xFFFFFFFF)>>>0;
+  }
+  function u16(v){return new Uint8Array([v&255,(v>>>8)&255]);}
+  function u32(v){return new Uint8Array([v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255]);}
+  function concatBytes(parts){
+    let total=0;for(const p of parts)total+=p.length;
+    const out=new Uint8Array(total);let off=0;
+    for(const p of parts){out.set(p,off);off+=p.length;}
+    return out;
+  }
+  function zipStore(files){
+    const encoder=new TextEncoder(), locals=[], centrals=[]; let offset=0;
+    for(const file of files){
+      const name=encoder.encode(file.name), data=encoder.encode(file.data), crc=crc32(data);
+      const local=concatBytes([
+        new Uint8Array([0x50,0x4b,0x03,0x04]),u16(20),u16(0x0800),u16(0),u16(0),u16(0),
+        u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data
+      ]);
+      locals.push(local);
+      const central=concatBytes([
+        new Uint8Array([0x50,0x4b,0x01,0x02]),u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0),
+        u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),
+        u32(0),u32(offset),name
+      ]);
+      centrals.push(central);
+      offset+=local.length;
+    }
+    const centralStart=offset;
+    const centralBytes=concatBytes(centrals);
+    const end=concatBytes([
+      new Uint8Array([0x50,0x4b,0x05,0x06]),u16(0),u16(0),u16(files.length),u16(files.length),
+      u32(centralBytes.length),u32(centralStart),u16(0)
+    ]);
+    return new Blob([...locals,centralBytes,end],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+
+  async function exportExcel(){
+    const list=await getHistory();
+    if(!list.length){alert("В истории пока нет покупок.");return;}
+
+    const rows=[[
+      "Дата","Время","Категория","Валюта","Сумма","USD","RUB",
+      "$1 → RUB","$1 → JPY","$1 → CNY","Курс для покупки","Комментарий"
+    ]];
+
+    for(const item of list){
+      const d=new Date(item.time);
+      const symbol=item.currency==="jpy"?"JPY":"CNY";
+      const localAmount=item.amount;
+      const ownRate=item.currency==="jpy"?item.jpyRate:item.cnyRate;
+      const category=item.category?.name||"Без категории";
+      rows.push([
+        d.toLocaleDateString("ru-RU"),
+        d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),
+        `${item.category?.icon||"✏️"} ${category}`,
+        symbol,
+        localAmount,
+        item.usd,
+        item.rub,
+        item.rubRate,
+        item.jpyRate,
+        item.cnyRate,
+        ownRate,
+        ""
+      ]);
+    }
+
+    const summary=[["Показатель","Значение"],["Количество покупок",list.length],
+      ["Всего RUB",list.reduce((s,x)=>s+Number(x.rub||0),0)],
+      ["Всего USD",list.reduce((s,x)=>s+Number(x.usd||0),0)]
+    ];
+
+    const contentTypes=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+</Types>`;
+
+    const rootRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`;
+
+    const workbook=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets><sheet name="Покупки" sheetId="1" r:id="rId1"/><sheet name="Итоги" sheetId="2" r:id="rId2"/></sheets>
+</workbook>`;
+
+    const workbookRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>
+</Relationships>`;
+
+    const files=[
+      {name:"[Content_Types].xml",data:contentTypes},
+      {name:"_rels/.rels",data:rootRels},
+      {name:"xl/workbook.xml",data:workbook},
+      {name:"xl/_rels/workbook.xml.rels",data:workbookRels},
+      {name:"xl/worksheets/sheet1.xml",data:xlsxSheetXml(rows)},
+      {name:"xl/worksheets/sheet2.xml",data:xlsxSheetXml(summary)}
+    ];
+
+    const blob=zipStore(files);
+    const stamp=new Date().toISOString().slice(0,10);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download=`purchases-${stamp}.xlsx`;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+
+  // ---------- UI ----------
+  function setActive(currency){
+    activeCurrency=currency;
+    document.querySelectorAll(".switch").forEach(b=>b.classList.toggle("active",b.dataset.currency===currency));
+    $("jpyPanel").classList.toggle("hidden",currency!=="jpy");
+    $("cnyPanel").classList.toggle("hidden",currency!=="cny");
     $(currency).focus();
   }
 
-  document.querySelectorAll(".switch").forEach((button) => {
-    button.addEventListener("click", () => setActive(button.dataset.currency));
+  document.querySelectorAll(".switch").forEach(b=>b.addEventListener("click",()=>setActive(b.dataset.currency)));
+  ["jpy","cny","rubRate","jpyRate","cnyRate"].forEach(id=>$(id).addEventListener("input",calculate));
+
+  $("jpyClear").addEventListener("click",()=>{ $("jpy").value=""; calculate(); $("jpy").focus(); });
+  $("cnyClear").addEventListener("click",()=>{ $("cny").value=""; calculate(); $("cny").focus(); });
+
+  $("buyJpy").addEventListener("click",()=>recordPurchase("jpy"));
+  $("buyCny").addEventListener("click",()=>recordPurchase("cny"));
+
+  $("saveRates").addEventListener("click",saveRates);
+  $("resetRates").addEventListener("click",()=>{
+    $("rubRate").value=defaults.rubRate;$("jpyRate").value=defaults.jpyRate;$("cnyRate").value=defaults.cnyRate;
+    localStorage.setItem("converterRatesV1",JSON.stringify(defaults));calculate();
   });
 
-  ["jpy", "cny", "rubRate", "jpyRate", "cnyRate"].forEach((id) => {
-    $(id).addEventListener("input", calculate);
+  $("toggleRates").addEventListener("click",()=>{
+    const card=$("ratesCard");card.classList.toggle("collapsed");
+    $("toggleRates").textContent=card.classList.contains("collapsed")?"Изменить":"Скрыть";
   });
 
-  $("jpyClear").addEventListener("click", () => {
-    $("jpy").value = "";
-    calculate();
-    $("jpy").focus();
+  $("settingsBtn").addEventListener("click",()=>{
+    $("ratesCard").classList.remove("collapsed");$("toggleRates").textContent="Скрыть";
+    $("ratesCard").scrollIntoView({behavior:"smooth",block:"start"});
   });
 
-  $("cnyClear").addEventListener("click", () => {
-    $("cny").value = "";
-    calculate();
-    $("cny").focus();
+  $("historyToggle").addEventListener("click",()=>{
+    const hidden=$("historyBody").classList.toggle("hidden");
+    $("historyToggle").textContent=hidden?"Показать":"Скрыть";
+    if(!hidden)renderHistory();
   });
+  $("exportExcel").addEventListener("click",exportExcel);
 
-  $("buyJpy").addEventListener("click", () => recordPurchase("jpy"));
-  $("buyCny").addEventListener("click", () => recordPurchase("cny"));
-
-  $("saveRates").addEventListener("click", saveRates);
-
-  $("resetRates").addEventListener("click", () => {
-    $("rubRate").value = defaults.rubRate;
-    $("jpyRate").value = defaults.jpyRate;
-    $("cnyRate").value = defaults.cnyRate;
-    localStorage.setItem("converterRatesV1", JSON.stringify(defaults));
-    calculate();
-  });
-
-  $("toggleRates").addEventListener("click", () => {
-    const card = $("ratesCard");
-    card.classList.toggle("collapsed");
-    $("toggleRates").textContent = card.classList.contains("collapsed") ? "Изменить" : "Скрыть";
-  });
-
-  $("settingsBtn").addEventListener("click", () => {
-    $("ratesCard").classList.remove("collapsed");
-    $("toggleRates").textContent = "Скрыть";
-    $("ratesCard").scrollIntoView({behavior:"smooth", block:"start"});
-  });
-
-  $("historyToggle").addEventListener("click", () => {
-    const hidden = $("historyBody").classList.toggle("hidden");
-    $("historyToggle").textContent = hidden ? "Показать" : "Скрыть";
-    if (!hidden) renderHistory();
-  });
-
-  $("clearHistory").addEventListener("click", () => {
-    if (!getHistory().length) return;
-    if (confirm("Удалить всю историю покупок?")) {
-      localStorage.removeItem("converterHistoryV2");
-      renderHistory();
+  $("clearHistory").addEventListener("click",async()=>{
+    const list=await getHistory();
+    if(!list.length)return;
+    if(confirm("Удалить всю историю покупок?")){
+      try{await dbClear();}catch(_){localStorage.removeItem("converterHistoryV2");}
+      await renderHistory();
       $("historyBody").classList.remove("hidden");
-      $("historyToggle").textContent = "Скрыть";
+      $("historyToggle").textContent="Скрыть";
     }
   });
 
-  loadSaved();
-  renderHistory();
+  renderCategories("jpy");
+  renderCategories("cny");
+  loadLocalRatesAndAmounts();
   calculate();
+  (async()=>{await migrateLegacyHistory(); await renderHistory();})();
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
-  }
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const hint = $("installHint");
-  if (isIOS) {
-    hint.style.display = "block";
-    hint.textContent = "Safari → Поделиться → «На экран Домой» → «Открывать как веб-приложение».";
-  } else if (window.matchMedia && !window.matchMedia("(display-mode: standalone)").matches) {
-    hint.style.display = "block";
-    hint.textContent = "Chrome → меню ⋮ → «Установить приложение» / «Добавить на главный экран».";
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const hint=$("installHint");
+  if(isIOS){hint.style.display="block";hint.textContent="Safari → Поделиться → «На экран Домой» → «Открывать как веб-приложение»."}
+  else if(window.matchMedia&&!window.matchMedia("(display-mode: standalone)").matches){
+    hint.style.display="block";hint.textContent="Chrome → меню ⋮ → «Установить приложение» / «Добавить на главный экран».";
   }
 })();
 </script>
