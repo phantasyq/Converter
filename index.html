@@ -72,14 +72,41 @@ button:active{transform:translateY(1px)}
   .store-input{font-size:41px}
   .chips{grid-template-columns:repeat(3,1fr)}
 }
+
+.history-card{margin-bottom:12px}
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.history-title{font-weight:800}
+.history-count{font-size:11px;color:var(--muted);margin-top:2px}
+.history-actions{display:flex;gap:7px}
+.history-body{margin-top:11px}
+.history-body.hidden{display:none}
+.history-empty{font-size:13px;color:var(--muted);padding:10px 2px}
+.history-list{display:flex;flex-direction:column;gap:8px}
+.history-item{
+  border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff
+}
+.history-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.history-main{font-size:16px;font-weight:750}
+.history-rub{font-size:19px;font-weight:800;white-space:nowrap}
+.history-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.history-delete{
+  margin-top:7px;border:0;background:transparent;color:var(--muted);padding:2px 0;font-size:11px
+}
+.history-save{
+  width:100%;margin-top:8px;background:#111827;color:#fff;border-color:#111827;
+  font-weight:700;padding:12px 10px
+}
+.history-save.saved{background:#2d7a43;border-color:#2d7a43}
+.danger{color:#a33;background:#fff}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="topbar">
     <div>
-      <h1>¥ / 元 → $ → ₽</h1>
-      <div class="subtitle">Быстрый расчёт цены в магазине</div>
+      <h1>Конвертер CNY / JPY / USD / RUB</h1>
+      
     </div>
     <button class="icon-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
   </div>
@@ -95,11 +122,28 @@ button:active{transform:translateY(1px)}
         <div><label for="jpyRate">$1 → ¥</label><input id="jpyRate" class="rate-input" inputmode="decimal" value="157"></div>
         <div><label for="cnyRate">$1 → 元</label><input id="cnyRate" class="rate-input" inputmode="decimal" value="7"></div>
       </div>
-      <div class="rate-note">Эффективно: <b id="jpyEffective">—</b> ₽/¥1 · <b id="cnyEffective">—</b> ₽/元1</div>
       <div class="actions">
         <button id="save" type="button">Сохранить</button>
         <button id="reset" class="secondary" type="button">Сбросить</button>
       </div>
+    </div>
+  </section>
+
+
+  <section class="card history-card" id="historyCard">
+    <div class="history-head">
+      <div>
+        <div class="history-title">История покупок</div>
+        <div class="history-count" id="historyCount">0 записей</div>
+      </div>
+      <div class="history-actions">
+        <button id="historyToggle" class="secondary" type="button">Показать</button>
+        <button id="clearHistory" class="secondary danger" type="button">Очистить</button>
+      </div>
+    </div>
+    <div id="historyBody" class="history-body hidden">
+      <div id="historyEmpty" class="history-empty">История пока пустая. Нажми «Сохранить в историю» после покупки.</div>
+      <div id="historyList" class="history-list"></div>
     </div>
   </section>
 
@@ -264,6 +308,120 @@ document.querySelectorAll("[data-target]").forEach(btn=>{
 ["jpy","cny"].forEach(id=>el(id).addEventListener("keydown",e=>{
   if(e.key==="Enter") e.preventDefault();
 }));
+
+
+  const HISTORY_KEY = "converterPurchaseHistoryV1";
+
+  function loadHistory(){
+    try{
+      const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      return Array.isArray(data) ? data : [];
+    }catch(e){ return []; }
+  }
+
+  function saveHistory(data){
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(data));
+  }
+
+  function renderHistory(){
+    const list = loadHistory();
+    el("historyCount").textContent = `${list.length} ${list.length===1?"запись":"записей"}`;
+    const body = el("historyBody");
+    const empty = el("historyEmpty");
+    const container = el("historyList");
+    container.innerHTML = "";
+
+    if(!list.length){
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+
+    for(const item of list){
+      const row = document.createElement("div");
+      row.className = "history-item";
+      const date = new Date(item.time);
+      const dateText = date.toLocaleString("ru-RU",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+      const sourceLabel = item.currency==="jpy" ? "¥" : "元";
+      const rateLocal = item.currency==="jpy" ? item.jpyRate : item.cnyRate;
+      row.innerHTML = `
+        <div class="history-row">
+          <div class="history-main">${sourceLabel}${money(item.amount, item.currency==="jpy"?0:2)}</div>
+          <div class="history-rub">₽${money(item.rub)}</div>
+        </div>
+        <div class="history-meta">$${money(item.usd)} · $1 = ${money(rateLocal)} ${sourceLabel} · $1 = ₽${money(item.rubRate)} · ${dateText}</div>
+        <button class="history-delete" type="button" data-history-id="${item.id}">Удалить</button>
+      `;
+      container.appendChild(row);
+    }
+
+    container.querySelectorAll("[data-history-id]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const next = loadHistory().filter(x=>x.id!==btn.dataset.historyId);
+        saveHistory(next);
+        renderHistory();
+      });
+    });
+  }
+
+  function addToHistory(currency){
+    const rubRate = num(el("rubRate").value);
+    const jpyRate = num(el("jpyRate").value);
+    const cnyRate = num(el("cnyRate").value);
+    const amount = num(el(currency).value);
+    const unitPerUsd = currency==="jpy" ? jpyRate : cnyRate;
+
+    if(!(rubRate>0) || !(unitPerUsd>0) || !(amount>0)){
+      alert("Введите цену и проверьте курс.");
+      return;
+    }
+
+    const usd = amount / unitPerUsd;
+    const rub = usd * rubRate;
+    const item = {
+      id: `${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+      time: new Date().toISOString(),
+      currency, amount, usd, rub, rubRate, jpyRate, cnyRate
+    };
+
+    const list = loadHistory();
+    list.unshift(item);
+    saveHistory(list.slice(0,100));
+    renderHistory();
+
+    const btn = el(currency==="jpy" ? "saveJpyHistory" : "saveCnyHistory");
+    btn.classList.add("saved");
+    btn.textContent = "✓ Сохранено";
+    setTimeout(()=>{
+      btn.classList.remove("saved");
+      btn.textContent = "＋ Сохранить в историю";
+    },1100);
+
+    el("historyBody").classList.remove("hidden");
+    el("historyToggle").textContent = "Скрыть";
+  }
+
+  el("saveJpyHistory").addEventListener("click",()=>addToHistory("jpy"));
+  el("saveCnyHistory").addEventListener("click",()=>addToHistory("cny"));
+
+  el("historyToggle").addEventListener("click",()=>{
+    const body = el("historyBody");
+    const hidden = body.classList.toggle("hidden");
+    el("historyToggle").textContent = hidden ? "Показать" : "Скрыть";
+    if(!hidden) renderHistory();
+  });
+
+  el("clearHistory").addEventListener("click",()=>{
+    if(!loadHistory().length) return;
+    if(confirm("Удалить всю историю покупок?")){
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+      el("historyBody").classList.remove("hidden");
+      el("historyToggle").textContent = "Скрыть";
+    }
+  });
+
+  renderHistory();
 
 if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
