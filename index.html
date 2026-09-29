@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="¥/元 → $ → ₽">
+  <meta name="description" content="Два персональных конвертера: иена → доллар → рубль и юань → доллар → рубль">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>¥ / 元 → $ → ₽</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+      --accent:#1473e6;--soft:#f3f4f6;--success:#edf8ef;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:760px;margin:0 auto;padding:18px 16px 36px}
+    h1{font-size:30px;margin:6px 0 4px;letter-spacing:-.6px}
+    .subtitle{color:var(--muted);margin-bottom:18px;line-height:1.4}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 2px 10px rgba(0,0,0,.03);padding:16px}
+    .rates{margin-bottom:14px}
+    .rate-title{font-weight:700;margin-bottom:12px}
+    .rate-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+    input{
+      width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px 12px;
+      font-size:18px;color:var(--text);outline:none
+    }
+    input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(20,115,230,.12)}
+    .rate-note{margin-top:10px;color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .actions button{flex:1}
+    button{
+      appearance:none;border:1px solid var(--line);background:var(--soft);color:var(--text);
+      border-radius:11px;padding:10px 14px;font-size:15px;cursor:pointer
+    }
+    button:active{transform:translateY(1px)}
+    .secondary{background:#fff}
+    .converter{margin-bottom:14px}
+    .converter-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+    .converter-title{font-size:20px;font-weight:750;letter-spacing:-.2px}
+    .converter-rate{font-size:12px;color:var(--muted);white-space:nowrap}
+    .field-label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;margin:12px 0 7px}
+    .row{display:flex;align-items:center;gap:10px;padding:11px 0}
+    .row + .row{border-top:1px solid var(--line)}
+    .flag{font-size:16px;min-width:26px}
+    .currency{color:var(--muted);font-size:13px;min-width:135px}
+    .big{
+      flex:1;text-align:right;border:0;padding:0;font-size:34px;font-weight:650;
+      background:transparent;box-shadow:none
+    }
+    .big:focus{box-shadow:none}
+    .big-output{text-align:right;font-size:34px;font-weight:650;flex:1}
+    .arrow{text-align:center;color:var(--muted);font-size:17px;margin:-3px 0}
+    .result{background:var(--success);border-radius:14px;padding:13px 14px;margin-top:6px}
+    .result-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .rub{font-size:31px;font-weight:750}
+    .formula{color:var(--muted);font-size:12px;margin-top:3px}
+    .quick{margin-bottom:14px}
+    .quick-title{font-weight:700;margin-bottom:9px}
+    .quick-block + .quick-block{margin-top:13px}
+    .quick-label{font-size:13px;color:var(--muted);margin-bottom:7px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:14px;line-height:1.5}
+    .install{display:none;margin-top:12px;border:1px dashed #cfd4dc;border-radius:13px;padding:11px 12px;color:var(--muted);font-size:13px;background:#fff}
+    .hint{font-size:12px;color:var(--muted);margin-top:5px}
+    @media(max-width:620px){.rate-grid{grid-template-columns:1fr}.converter-head{align-items:flex-start;flex-direction:column;gap:2px}}
+    @media(max-width:560px){.wrap{padding-top:14px}h1{font-size:27px}.currency{min-width:110px}.big,.big-output{font-size:31px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>¥ / 元 → $ → ₽</h1>
+  <div class="subtitle">Два независимых конвертера по твоей цепочке: местная валюта → доллар → рубль.</div>
+
+  <section class="card rates">
+    <div class="rate-title">Мои курсы покупки</div>
+    <div class="rate-grid">
+      <div>
+        <label for="rubRate">$1 в рублях</label>
+        <input id="rubRate" inputmode="decimal" value="86.65">
+        <div class="hint">Например: 86,65 ₽</div>
+      </div>
+      <div>
+        <label for="jpyRate">$1 в иенах</label>
+        <input id="jpyRate" inputmode="decimal" value="157">
+        <div class="hint">Например: ¥157</div>
+      </div>
+      <div>
+        <label for="cnyRate">$1 в юанях</label>
+        <input id="cnyRate" inputmode="decimal" value="7">
+        <div class="hint">Укажи свой курс за $1</div>
+      </div>
+    </div>
+    <div class="rate-note">Эффективные курсы: <b id="jpyEffective">—</b> ₽/¥1 · <b id="cnyEffective">—</b> ₽/元1</div>
+    <div class="actions">
+      <button id="save" type="button">Сохранить курсы</button>
+      <button id="reset" class="secondary" type="button">Сбросить</button>
+    </div>
+  </section>
+
+  <section class="card converter">
+    <div class="converter-head">
+      <div class="converter-title">1. Иена → Доллар → Рубль</div>
+      <div class="converter-rate" id="jpyRateLabel">¥157 = $1</div>
+    </div>
+
+    <div class="field-label"><span class="flag">🇯🇵</span> Японская иена</div>
+    <div class="row">
+      <div class="currency">Цена</div>
+      <input id="jpy" class="big" inputmode="decimal" value="230" aria-label="Сумма в иенах">
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="field-label"><span class="flag">🇺🇸</span> Доллар США</div>
+    <div class="row">
+      <div class="currency">Через доллар</div>
+      <div id="jpyUsd" class="big-output" aria-live="polite">$1,46</div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="field-label"><span class="flag">🇷🇺</span> Российский рубль</div>
+    <div class="result">
+      <div class="result-top"><div class="currency">Итого</div><div id="jpyRub" class="rub" aria-live="polite">₽126,20</div></div>
+      <div id="jpyFormula" class="formula">230 ÷ 157 × 86,65</div>
+    </div>
+  </section>
+
+  <section class="card converter">
+    <div class="converter-head">
+      <div class="converter-title">2. Юань → Доллар → Рубль</div>
+      <div class="converter-rate" id="cnyRateLabel">元7 = $1</div>
+    </div>
+
+    <div class="field-label"><span class="flag">🇨🇳</span> Китайский юань</div>
+    <div class="row">
+      <div class="currency">Цена</div>
+      <input id="cny" class="big" inputmode="decimal" value="100" aria-label="Сумма в юанях">
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="field-label"><span class="flag">🇺🇸</span> Доллар США</div>
+    <div class="row">
+      <div class="currency">Через доллар</div>
+      <div id="cnyUsd" class="big-output" aria-live="polite">$14,29</div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="field-label"><span class="flag">🇷🇺</span> Российский рубль</div>
+    <div class="result">
+      <div class="result-top"><div class="currency">Итого</div><div id="cnyRub" class="rub" aria-live="polite">₽1 238,57</div></div>
+      <div id="cnyFormula" class="formula">100 ÷ 7 × 86,65</div>
+    </div>
+  </section>
+
+  <section class="card quick">
+    <div class="quick-title">Быстрые суммы</div>
+
+    <div class="quick-block">
+      <div class="quick-label">Иены</div>
+      <div class="chips">
+        <button data-target="jpy" data-value="100">¥100</button>
+        <button data-target="jpy" data-value="500">¥500</button>
+        <button data-target="jpy" data-value="1000">¥1 000</button>
+        <button data-target="jpy" data-value="5000">¥5 000</button>
+        <button data-target="jpy" data-value="10000">¥10 000</button>
+        <button data-target="jpy" data-value="20000">¥20 000</button>
+        <button data-target="jpy" data-value="50000">¥50 000</button>
+        <button data-target="jpy" data-value="100000">¥100 000</button>
+      </div>
+    </div>
+
+    <div class="quick-block">
+      <div class="quick-label">Юани</div>
+      <div class="chips">
+        <button data-target="cny" data-value="10">元10</button>
+        <button data-target="cny" data-value="50">元50</button>
+        <button data-target="cny" data-value="100">元100</button>
+        <button data-target="cny" data-value="500">元500</button>
+        <button data-target="cny" data-value="1000">元1 000</button>
+        <button data-target="cny" data-value="2000">元2 000</button>
+        <button data-target="cny" data-value="5000">元5 000</button>
+        <button data-target="cny" data-value="10000">元10 000</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="installHint" class="install"></div>
+  <div class="footer">Курсы сохраняются на этом устройстве. Можно менять их перед каждой поездкой или обменом.</div>
+</div>
+
+<script>
+  const defaults={rubRate:86.65,jpyRate:157,cnyRate:7};
+  const saved=JSON.parse(localStorage.getItem("multiCurrencyRates")||"null");
+  if(saved){
+    for(const k of ["rubRate","jpyRate","cnyRate"]){
+      if(Number.isFinite(Number(saved[k]))){document.getElementById(k).value=saved[k]}
+    }
+  }
+
+  const el=id=>document.getElementById(id);
+  const num=v=>parseFloat(String(v).replace(",",".").replace(/[^0-9.\-]/g,""));
+  const money=(v,d=2)=>new Intl.NumberFormat("ru-RU",{minimumFractionDigits:d,maximumFractionDigits:d}).format(v);
+
+  function convert(amount, unitPerUsd, rubPerUsd){
+    return {usd:amount/unitPerUsd,rub:(amount/unitPerUsd)*rubPerUsd};
+  }
+
+  function calculate(){
+    const rubRate=num(el("rubRate").value);
+    const jpyRate=num(el("jpyRate").value);
+    const cnyRate=num(el("cnyRate").value);
+
+    if(!(rubRate>0)||!(jpyRate>0)||!(cnyRate>0)) return;
+
+    const j=convert(num(el("jpy").value)||0,jpyRate,rubRate);
+    el("jpyUsd").textContent="$"+money(j.usd);
+    el("jpyRub").textContent="₽"+money(j.rub);
+    el("jpyFormula").textContent=`${money(num(el("jpy").value)||0,0)} ÷ ${money(jpyRate)} × ${money(rubRate)}`;
+
+    const c=convert(num(el("cny").value)||0,cnyRate,rubRate);
+    el("cnyUsd").textContent="$"+money(c.usd);
+    el("cnyRub").textContent="₽"+money(c.rub);
+    el("cnyFormula").textContent=`${money(num(el("cny").value)||0,0)} ÷ ${money(cnyRate)} × ${money(rubRate)}`;
+
+    el("jpyEffective").textContent=money(rubRate/jpyRate,5);
+    el("cnyEffective").textContent=money(rubRate/cnyRate,5);
+    el("jpyRateLabel").textContent=`¥${money(jpyRate)} = $1`;
+    el("cnyRateLabel").textContent=`元${money(cnyRate)} = $1`;
+  }
+
+  function saveRates(){
+    const rates={rubRate:num(el("rubRate").value),jpyRate:num(el("jpyRate").value),cnyRate:num(el("cnyRate").value)};
+    if(!(rates.rubRate>0)||!(rates.jpyRate>0)||!(rates.cnyRate>0)) return alert("Проверь все три курса.");
+    localStorage.setItem("multiCurrencyRates",JSON.stringify(rates));
+    calculate();
+    el("save").textContent="Сохранено ✓";
+    setTimeout(()=>el("save").textContent="Сохранить курсы",1200);
+  }
+
+  ["jpy","cny","rubRate","jpyRate","cnyRate"].forEach(id=>el(id).addEventListener("input",calculate));
+  el("save").addEventListener("click",saveRates);
+  el("reset").addEventListener("click",()=>{
+    el("rubRate").value=defaults.rubRate;
+    el("jpyRate").value=defaults.jpyRate;
+    el("cnyRate").value=defaults.cnyRate;
+    saveRates();
+  });
+
+  document.querySelectorAll("[data-target]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target=btn.dataset.target;
+      el(target).value=btn.dataset.value;
+      calculate();
+      el(target).focus();
+    });
+  });
+
+  if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const hint=el("installHint");
+  if(isIOS){hint.style.display="block";hint.textContent="Для установки на iPhone: Safari → Поделиться → «На экран Домой» → «Открывать как веб-приложение»."}
+  else if(window.matchMedia&&!window.matchMedia("(display-mode: standalone)").matches){hint.style.display="block";hint.textContent="Для Android: Chrome → меню ⋮ → «Установить приложение» / «Добавить на главный экран»."}
+
+  calculate();
+</script>
+</body>
+</html>
